@@ -1,0 +1,14 @@
+footer{ background:#11213b; padding:34px 0; position: relative; bottom:0; left:0; width:100%; }
+footer p.copy-rights{ color:#fff; font-size:15px; letter-spacing:0.1em; }
+footer ul.ftr-social{ font-size:0; }
+footer ul.ftr-social li{ display:inline-block; margin-left:25px; }
+footer ul.ftr-social li:first-child{ margin-left:0px; }
+
+/*legal disclaimer css*/
+
+.legalDisclaimer p {
+    color: #fff;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-align: justify;
+}
