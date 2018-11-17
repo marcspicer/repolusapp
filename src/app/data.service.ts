@@ -64,7 +64,7 @@ export class DataService {
     return this.http.get(this.baseUrl + '/api/getAllNeighborhoodsAbRt/' + nmYr);
   }
 
-  // get one neighborhood market reports of manhattan based on specific neighborhood name.
+  // get one neighborhood market reports of manhattan based on specific neighborhood name and years selected.
   getOneNeighborhoodMReport(mrObject) {
     return this.http.post(
       this.baseUrl + '/api/getOneNeighborhoodMReport',
@@ -72,7 +72,7 @@ export class DataService {
     );
   }
 
-  // get one neighborhood market reports of brooklyn based on specific neighborhood name.
+  // get one neighborhood market reports of brooklyn based on specific neighborhood name and years selected.
   getOneNeighborhoodMRBrk(mrObject) {
     return this.http.post(
       this.baseUrl + '/api/getOneNeighborhoodMRBrooklyn',

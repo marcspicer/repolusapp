@@ -750,6 +750,23 @@ button.selected-item .fa {
   margin-bottom: 2px;
 }
 
+.stylish-btn-wrapper {
+  margin-top: 17px;
+}
+
+a.stylish-btn {
+  line-height: 12px;
+  color: #fff;
+  padding: 16px;
+  font-size: 15px;
+  border-radius: 4px;
+  background: #22c2a6;
+  letter-spacing: 0.1em;
+}
+a.stylish-btn:hover {
+  background: #fb4381;
+}
+
 @media only screen and (max-width: 1400px) {
   /*.banner { padding: 150px 0 0; }  */
   /*.banner p.banner-description{ padding:0 30px; }*/

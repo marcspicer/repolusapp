@@ -815,7 +815,7 @@
                       </a>
                       <ul class="dropdown-menu first-menu absorptionDDStyle showHandPointer">
                           <li *ngFor="let nbrNm of allNeighborhoodsAbRt" id="dropdownConfig0707"
-                            (click)="selectedDateNeighborhoodMethod(nbrNm, 0);"><a>{{nbrNm}}</a></li>
+                            (click)="arSelectNeighborhood(nbrNm);"><a>{{nbrNm}}</a></li>
                       </ul>
                   </li>
                   </div>
@@ -853,7 +853,7 @@
                       </a>
                       <ul class="dropdown-menu first-menu marketReportDDStyle showHandPointer">
                           <li *ngFor="let nbName of allNbrsMrManhattan" id="dropdownConfig0909"
-                            (click)="getOneNeighborhoodMReport(nbName);"><a>{{nbName}}</a></li>
+                            (click)="selectNeighborhoodAp(nbName);"><a>{{nbName}}</a></li>
                       </ul>
                   </li>
                   </div> 
@@ -871,7 +871,7 @@
                       </a>
                       <ul class="dropdown-menu first-menu marketReportDDStyleBrooklyn showHandPointer">
                           <li *ngFor="let nbName of allNbrsMrBrk" id="dropdownConfig0909"
-                            (click)="getOneNeighborhoodMRBrk(nbName, null);"><a>{{nbName}}</a></li>
+                            (click)="selectNeighborhoodAp(nbName);"><a>{{nbName}}</a></li>
                       </ul>
                   </li>
                   </div> 
@@ -963,9 +963,14 @@
                     </a>
                     <ul class="dropdown-menu first-menu absorptionDDStyle showHandPointer">
                         <li *ngFor="let mnYr of datesOfAbsorptionData?.slice().reverse()" id="dropdownConfig222"
-                            (click)="selectedDateNeighborhoodMethod(0, mnYr);"><a>{{mnYr | date:'MMM yyyy'}}</a></li>  
+                            (click)="arSelectYear(mnYr);"><a>{{mnYr | date:'MMM yyyy'}}</a></li>  
                     </ul>
                 </li>
+              </div>
+              <div class="stylish-btn-wrapper">
+                  <a *ngIf="selectedAbOrMr=='Absorption Rates'" simplePageScroll routerLink="/" class="stylish-btn" (click)="mrArFetchResults()">Update Results On Graph <i class="fa fa-refresh" aria-hidden="true"></i></a>
+                  <a *ngIf="selectedAbOrMr=='Average Prices'" simplePageScroll routerLink="/" class="stylish-btn" (click)="mrApFetchResults()">Update Results On Graph <i class="fa fa-refresh" aria-hidden="true"></i>
+                  </a>
               </div>
             </div>
             <div class="col-md-6 col-sm-6 market-reports-content">
@@ -974,7 +979,7 @@
                     <h3>Absorption Rates</h3>
                     <p>The absorption rate in the number of months it would take to sell all active listings in a given market. We have shown 
                       every month absorption rate data in chart below.
-                    </p>
+                    </p>                    
                 </div>
                 <div *ngIf="selectedAbOrMr=='Average Prices'">
                     <h3>Average Prices</h3>
@@ -994,6 +999,7 @@
                             </div>
                         </div>
                         <h4 class="noDatatoshow" *ngIf="showNoDataMessageBoolean">{{showNoDataMessage}}</h4>
+                        <h4 class="noDatatoshow" *ngIf="showDDSelectionError">{{showDDSelectionError}}</h4>
                     </div>
                 </div>
 

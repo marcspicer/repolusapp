@@ -205,12 +205,6 @@ export class ContentComponent implements OnInit {
     this.marketReportsChart = document.getElementById('market-reports-chart');
     this.marketReportsChart = this.marketReportsChart.getContext('2d');
 
-    // market report work
-    // this.abOrMr = ["Absorption Rates", "Market Reports"];
-    // this.selectedAbOrMr = this.abOrMr[0];
-    // this.selectedMrRpNbr = this.allNbrsMrManhattan[0];
-    // this.getOneNeighborhoodMReport(this.selectedMrRpNbr);
-
     this.showNoDataMessageBoolean = false;
 
     // years dropdown
@@ -857,8 +851,7 @@ export class ContentComponent implements OnInit {
     console.log(items);
   }
 
-  // // market report work
-
+  // Market Report Absorption Rates Work
   // get all dates for absorption dropdown
   getMonthsDropdown() {
     this.dataService.getMonthsDropdown().subscribe(
@@ -900,140 +893,133 @@ export class ContentComponent implements OnInit {
     );
   }
 
-  selectedDateNeighborhood = {
-    name: 'All Neighborhoods',
-    date: this.latestDate
-  };
-
-  // default get data of absorption rates based on all neighborhoods of latest date.
-  // defaultDateNeighborhoodMethod(latestDate) {
-  //   this.selectedDateNeighborhood.date = latestDate;
-  //   // this.getAllNeighborhoodsAbRt(0, latestDate);
-
-  //   this.selectedDate = this.selectedDateNeighborhood.date;
-  //   this.selectedNbr = this.selectedDateNeighborhood.name;
-  // }
-
   selectedDateRange: any;
+  // if date range != custom
+  // and its like last year, last 2 years etc.
   selectDateRange(dr) {
     this.selectedDateRange = dr;
-    if (
-      this.selectedDateRange != 'CustomDates' &&
-      this.selectedAbOrMr == 'Absorption Rates'
-    ) {
+    console.log('selectDateRange dr:', dr);
+    if (this.selectedDateRange != 'CustomDates') {
       var thisYear = new Date();
+      thisYear.toISOString();
       if (this.selectedDateRange == 'LastYear') {
         var lastYear = new Date(thisYear);
         lastYear.setFullYear(lastYear.getFullYear() - 1);
-        this.selectedDateNeighborhoodMethod(0, lastYear);
+        this.arSelectYear(lastYear);
+        this.yearSelectection(lastYear.getFullYear(), thisYear.getFullYear());
       } else if (this.selectedDateRange == 'Last2Year') {
         var last2Year = new Date(thisYear);
         last2Year.setFullYear(last2Year.getFullYear() - 2);
-        this.selectedDateNeighborhoodMethod(0, last2Year);
+        this.arSelectYear(last2Year);
+        this.yearSelectection(last2Year.getFullYear(), thisYear.getFullYear());
       } else if (this.selectedDateRange == 'Last3Year') {
         var last3Year = new Date(thisYear);
         last3Year.setFullYear(last3Year.getFullYear() - 3);
-        this.selectedDateNeighborhoodMethod(0, last3Year);
+        this.arSelectYear(last3Year);
+        this.yearSelectection(last3Year.getFullYear(), thisYear.getFullYear());
       } else if (this.selectedDateRange == 'Last4Year') {
         var last4Year = new Date(thisYear);
         last4Year.setFullYear(last4Year.getFullYear() - 4);
-        this.selectedDateNeighborhoodMethod(0, last4Year);
+        this.arSelectYear(last4Year);
+        this.yearSelectection(last4Year.getFullYear(), thisYear.getFullYear());
       } else if (this.selectedDateRange == 'Last5Year') {
         var last5Year = new Date(thisYear);
         last5Year.setFullYear(last5Year.getFullYear() - 5);
-        this.selectedDateNeighborhoodMethod(0, last5Year);
+        this.arSelectYear(last5Year);
+        this.yearSelectection(last5Year.getFullYear(), thisYear.getFullYear());
       }
     }
   }
 
-  selectedDateNeighborhoodMethod(nbr, date) {
-    console.log('nbr:', nbr);
-    console.log('date:', date);
-    if (nbr === 0) {
-      this.selectedDateNeighborhood.date = date;
-      this.selectedDate = this.selectedDateNeighborhood.date;
+  // Select Neighborhood
+  arSelectNeighborhood(nh) {
+    console.log('arSelectNeighborhood nh:', nh);
+    this.selectedNbr = nh;
+  }
+  // Select Year
+  arSelectYear(d) {
+    console.log('arSelectYear d:', d);
+    d.type;
+    this.selectedDate = d;
+  }
+  // fetching absorption rates data
+  mrArFetchResults() {
+    if (this.selectedNbr && this.selectedDate) {
+      this.showDDSelectionError = '';
+      if (this.selectedNbr === 'All Neighborhoods') {
+        this.getAllNeighborhoodsAbRt();
+      } else {
+        this.getOneNeighborhoodAbRt();
+      }
     } else {
-      this.selectedDateNeighborhood.name = nbr;
-      this.selectedNbr = this.selectedDateNeighborhood.name;
-    }
-
-    console.log('selectedDateNeighborhood:', this.selectedDateNeighborhood);
-
-    if (this.selectedDateNeighborhood.name === 'All Neighborhoods') {
-      this.getAllNeighborhoodsAbRt(0, date);
-    } else {
-      this.getOneNeighborhoodAbRt(this.selectedDateNeighborhood);
+      this.showDDSelectionError =
+        'Please Select Dropdowns before Fetching the Data';
     }
   }
 
   abRtOfOneNeibhorhood: any;
   // get one neighborhood data from absorption rates based on specific date and neighborhood name
-  getOneNeighborhoodAbRt(selectedDateNeighborhood) {
-    console.log('selectedDateNeighborhood:', selectedDateNeighborhood);
-    var datee = selectedDateNeighborhood.date;
-    var namee = selectedDateNeighborhood.name;
+  getOneNeighborhoodAbRt() {
+    this.dataService
+      .getOneNeighborhoodAbRt({
+        name: this.selectedNbr,
+        date: this.selectedDate
+      })
+      .subscribe(
+        res => {
+          // destroy chart to delete the previous data from it otherwise it will also store the previous data.
+          if (
+            this.theReturnAbsorption !== undefined ||
+            this.abRtOfOneNeibhorhood !== undefined ||
+            this.theReturnMarketReports !== undefined ||
+            this.theReturnMRBrooklyn !== undefined
+          ) {
+            // this.absorptionChart.destroy();
+          }
 
-    var nbPlusDate = {
-      name: namee,
-      date: datee
-    };
-
-    this.dataService.getOneNeighborhoodAbRt(nbPlusDate).subscribe(
-      res => {
-        // destroy chart to delete the previous data from it otherwise it will also store the previous data.
-        if (
-          this.theReturnAbsorption !== undefined ||
-          this.abRtOfOneNeibhorhood !== undefined ||
-          this.theReturnMarketReports !== undefined ||
-          this.theReturnMRBrooklyn !== undefined
-        ) {
-          // this.absorptionChart.destroy();
+          this.abRtOfOneNeibhorhood = res[0];
+          this.showNoDataMessageBoolean =
+            this.abRtOfOneNeibhorhood === undefined ? true : false;
+          this.absorptionChart = new Chart(this.marketReportsChart, {
+            type: 'bar',
+            title: {
+              text: 'Dynamic Data'
+            },
+            data: {
+              labels: [this.abRtOfOneNeibhorhood.neighborhoodName],
+              datasets: [
+                {
+                  label: 'Appartments',
+                  backgroundColor: '#eae891',
+                  hoverBackgroundColor: '#d7d569',
+                  data: this.abRtOfOneNeibhorhood.APT
+                },
+                {
+                  label: 'Condominiums',
+                  backgroundColor: '#64bfc2',
+                  hoverBackgroundColor: '#44abaf',
+                  data: this.abRtOfOneNeibhorhood.CONDO
+                },
+                {
+                  label: 'Cooperatives',
+                  backgroundColor: '#9883cd',
+                  hoverBackgroundColor: '#7c64b9',
+                  data: this.abRtOfOneNeibhorhood.COOP
+                }
+              ]
+            },
+            options: this.abrt_chart_options
+          });
+        },
+        err => {
+          console.log('Error occured while fetching months', err);
         }
-
-        this.abRtOfOneNeibhorhood = res[0];
-        this.showNoDataMessageBoolean =
-          this.abRtOfOneNeibhorhood === undefined ? true : false;
-        this.absorptionChart = new Chart(this.marketReportsChart, {
-          type: 'bar',
-          title: {
-            text: 'Dynamic Data'
-          },
-          data: {
-            labels: [this.abRtOfOneNeibhorhood.neighborhoodName],
-            datasets: [
-              {
-                label: 'Appartments',
-                backgroundColor: '#eae891',
-                hoverBackgroundColor: '#d7d569',
-                data: this.abRtOfOneNeibhorhood.APT
-              },
-              {
-                label: 'Condominiums',
-                backgroundColor: '#64bfc2',
-                hoverBackgroundColor: '#44abaf',
-                data: this.abRtOfOneNeibhorhood.CONDO
-              },
-              {
-                label: 'Cooperatives',
-                backgroundColor: '#9883cd',
-                hoverBackgroundColor: '#7c64b9',
-                data: this.abRtOfOneNeibhorhood.COOP
-              }
-            ]
-          },
-          options: this.abrt_chart_options
-        });
-      },
-      err => {
-        console.log('Error occured while fetching months', err);
-      }
-    );
+      );
   }
 
   // get all absorption rates data based on date e.g Jun 2018
-  getAllNeighborhoodsAbRt(e, nmYr) {
-    var newNmYr = nmYr;
-    this.dataService.getAllNeighborhoodsAbRt(newNmYr).subscribe(
+  getAllNeighborhoodsAbRt() {
+    this.dataService.getAllNeighborhoodsAbRt(this.selectedDate).subscribe(
       res => {
         // destroy chart to delete the previous data from it otherwise it will also store the previous data.
         if (
@@ -1103,11 +1089,10 @@ export class ContentComponent implements OnInit {
     );
   }
 
-  // Market Report Work
-  // abOrMr = [];
+  // Market Reports Average Prices Work
   selectedAbOrMr: any;
-  selectedMrRpNbr: any;
   selectedManhattanOrBrk: any;
+  selectedMrRpNbr: any;
 
   theReturnMarketReports: any;
   marketReportsQuarter = [];
@@ -1123,50 +1108,28 @@ export class ContentComponent implements OnInit {
   hideArCustomDateDD = true;
   hideArAllNeighborhoodsDD = true;
 
+  // Select Report Type
   selectAbOrMr(op) {
     this.selectedAbOrMr = op;
-    this.selectedDateRange = 'Date Range';
-
-    // destroy chart to delete the previous data from it otherwise it will also store the previous data.
-    // if(this.theReturnAbsorption !== undefined) {
-    //   this.absorptionChart.destroy();
-    // }
-
-    // if(this.selectedAbOrMr === "Market Reports"){
-    //     this.selectedMrRpNbr = this.allNbrsMrManhattan[0];
-    //     this.getOneNeighborhoodMReport(this.selectedMrRpNbr, this.yearsSelected, this.selectedavgOrMdnPrice);
-    //     this.selectedManhattanOrBrk = "Manhattan";
-    // }
-    // else if(this.selectedAbOrMr === "Absorption Rates"){
-    //     this.getMonthsDropdown();
-    // }
   }
-
+  // Select Brough
   selectManhattanOrBrk(brough) {
     this.selectedManhattanOrBrk = brough;
-    // if (this.selectedManhattanOrBrk === 'Manhattan') {
-    //   this.selectedMrRpNbr = this.allNbrsMrManhattan[0];
-    //   this.getOneNeighborhoodMReport(
-    //     this.selectedMrRpNbr,
-    //     this.yearsSelected,
-    //     this.selectedavgOrMdnPrice
-    //   );
-    // } else {
-    //   this.selectedMrRpNbr = this.allNbrsMrBrk[0];
-    //   this.getOneNeighborhoodMRBrk(
-    //     this.selectedMrRpNbr,
-    //     this.yearsSelected,
-    //     this.selectedavgOrMdnPrice
-    //   );
-    // }
   }
-
+  // Select Neighborhood
+  selectNeighborhoodAp(nh) {
+    this.selectedMrRpNbr = nh;
+  }
+  // Select Price Type
+  selectedavgOrMdnPrice: any;
+  changePriceType(selectedavgOrMdnPrice) {
+    this.selectedavgOrMdnPrice = selectedavgOrMdnPrice;
+  }
   // date picker
   yearsSelected: any;
   startYearSelected: any;
   endYearSelected: any;
   years = [];
-
   yearSelectection(sYear, eYear) {
     if (sYear) this.startYearSelected = sYear;
     if (eYear) this.endYearSelected = eYear;
@@ -1175,243 +1138,210 @@ export class ContentComponent implements OnInit {
       startYear: this.startYearSelected,
       endYear: this.endYearSelected
     };
-
-    // if (this.selectedManhattanOrBrk === 'Manhattan') {
-    //   this.getOneNeighborhoodMReport(
-    //     this.selectedMrRpNbr,
-    //     this.yearsSelected,
-    //     this.selectedavgOrMdnPrice
-    //   );
-    // } else if (this.selectedManhattanOrBrk === 'Brooklyn') {
-    //   this.getOneNeighborhoodMRBrk(
-    //     this.selectedMrRpNbr,
-    //     this.yearsSelected,
-    //     this.selectedavgOrMdnPrice
-    //   );
-    // }
   }
   // end date picker
 
-  // avg and mdn price work
-  selectedavgOrMdnPrice: any;
+  showDDSelectionError: String = '';
+  // Fetch Results
+  // mr = Market Report, ap = Average Prices
+  mrApFetchResults() {
+    // console.log('this.selectedAbOrMr:', this.selectedAbOrMr);
+    // console.log('this.selectedManhattanOrBrk:', this.selectedManhattanOrBrk);
+    console.log('this.selectedMrRpNbr:', this.selectedMrRpNbr);
+    // console.log('this.selectedavgOrMdnPrice:', this.selectedavgOrMdnPrice);
+    console.log('this.yearsSelected:', this.yearsSelected);
 
-  changePriceType(selectedavgOrMdnPrice) {
-    this.selectedavgOrMdnPrice = selectedavgOrMdnPrice;
-    // if (this.selectedManhattanOrBrk === 'Manhattan') {
-    //   this.getOneNeighborhoodMReport(
-    //     this.selectedMrRpNbr,
-    //     this.yearsSelected,
-    //     this.selectedavgOrMdnPrice
-    //   );
-    // } else if (this.selectedManhattanOrBrk === 'Brooklyn') {
-    //   this.getOneNeighborhoodMRBrk(
-    //     this.selectedMrRpNbr,
-    //     this.yearsSelected,
-    //     this.selectedavgOrMdnPrice
-    //   );
-    // }
+    // destroy chart to delete the previous data from it otherwise it will also store the previous data.
+    if (this.theReturnAbsorption !== undefined) {
+      this.absorptionChart.destroy();
+    }
+    // For Fetching data and show on graph we need these two parameters.
+    if (this.selectedMrRpNbr && this.yearsSelected) {
+      this.showDDSelectionError = '';
+      if (this.selectedManhattanOrBrk === 'Manhattan') {
+        this.getAveragePricesDataForManhattan();
+      } else if (this.selectedManhattanOrBrk === 'Brooklyn') {
+        this.getAveragePricesDataForBroklyn();
+      }
+    } else {
+      this.showDDSelectionError =
+        'Please Select Dropdowns before Fetching the Data';
+    }
   }
 
-  mrRpBody: any;
   // get one neighborhood market reports based on specific manhatan neighborhood name.
-  getOneNeighborhoodMReport(
-    selectedNeighborhood,
-    yearsRange,
-    selectedavgOrMdnPrice?
-  ) {
-    if (selectedNeighborhood) {
-      this.selectedMrRpNbr = selectedNeighborhood;
-      this.mrRpBody = {
-        name: selectedNeighborhood,
-        dateRange: this.yearsSelected
-      };
-    }
-    if (yearsRange) {
-      this.mrRpBody = {
+  getAveragePricesDataForManhattan() {
+    // send neighborhood neighborhood name and yearsSelected
+    this.dataService
+      .getOneNeighborhoodMReport({
         name: this.selectedMrRpNbr,
-        dateRange: yearsRange
-      };
-    }
+        dateRange: this.yearsSelected
+      })
+      .subscribe(
+        res => {
+          // destroy chart to delete the previous data from it otherwise it will also store the previous data.
+          if (
+            this.theReturnAbsorption !== undefined ||
+            this.abRtOfOneNeibhorhood !== undefined ||
+            this.theReturnMarketReports !== undefined ||
+            this.theReturnMRBrooklyn !== undefined
+          ) {
+            this.absorptionChart.destroy();
+          }
 
-    this.dataService.getOneNeighborhoodMReport(this.mrRpBody).subscribe(
-      res => {
-        // destroy chart to delete the previous data from it otherwise it will also store the previous data.
-        if (
-          this.theReturnAbsorption !== undefined ||
-          this.abRtOfOneNeibhorhood !== undefined ||
-          this.theReturnMarketReports !== undefined ||
-          this.theReturnMRBrooklyn !== undefined
-        ) {
-          this.absorptionChart.destroy();
+          // is it req for med price or avg price
+          this.theReturnMarketReports = res;
+          this.showNoDataMessageBoolean =
+            this.theReturnMarketReports.length === 0 ? true : false;
+
+          this.marketReportsQuarter = [];
+          this.marketReportsAvgPrice = [];
+          this.marketReportsMedianPrice = [];
+
+          for (var i = 0; i < this.theReturnMarketReports.length; i++) {
+            var AveragePrice = this.theReturnMarketReports[
+              i
+            ].AveragePrice.replace(/[^0-9]+/g, '');
+            var MedianPrice = this.theReturnMarketReports[
+              i
+            ].MedianPrice.replace(/[^0-9]+/g, '');
+            this.marketReportsQuarter.push(
+              this.theReturnMarketReports[i].Quarter
+            );
+            this.marketReportsAvgPrice.push(AveragePrice);
+            this.marketReportsMedianPrice.push(MedianPrice);
+          }
+
+          if (this.selectedavgOrMdnPrice == 'Average Price') {
+            this.absorptionChart = new Chart(this.marketReportsChart, {
+              type: 'bar',
+              title: {
+                text: 'Dynamic Data'
+              },
+              data: {
+                labels: this.marketReportsQuarter,
+                datasets: [
+                  {
+                    label: 'Avg Price in $',
+                    backgroundColor: '#62737B',
+                    hoverBackgroundColor: '#62737B',
+                    data: this.marketReportsAvgPrice
+                  }
+                ]
+              },
+              options: this.mrkrp_chart_options
+            });
+          } else if (this.selectedavgOrMdnPrice == 'Median Price') {
+            this.absorptionChart = new Chart(this.marketReportsChart, {
+              type: 'bar',
+              title: {
+                text: 'Dynamic Data'
+              },
+              data: {
+                labels: this.marketReportsQuarter,
+                datasets: [
+                  {
+                    label: 'Median Price in $',
+                    backgroundColor: '#9fc151',
+                    hoverBackgroundColor: '#9fc151',
+                    data: this.marketReportsMedianPrice
+                  }
+                ]
+              },
+              options: this.mrkrp_chart_options
+            });
+          }
+        },
+        err => {
+          console.log('Error occured while fetching months', err);
         }
-
-        // is it req for med price or avg price
-        this.theReturnMarketReports = res;
-        this.showNoDataMessageBoolean =
-          this.theReturnMarketReports.length === 0 ? true : false;
-
-        this.marketReportsQuarter = [];
-        this.marketReportsAvgPrice = [];
-        this.marketReportsMedianPrice = [];
-
-        for (var i = 0; i < this.theReturnMarketReports.length; i++) {
-          var AveragePrice = this.theReturnMarketReports[
-            i
-          ].AveragePrice.replace(/[^0-9]+/g, '');
-          var MedianPrice = this.theReturnMarketReports[i].MedianPrice.replace(
-            /[^0-9]+/g,
-            ''
-          );
-          this.marketReportsQuarter.push(
-            this.theReturnMarketReports[i].Quarter
-          );
-          this.marketReportsAvgPrice.push(AveragePrice);
-          this.marketReportsMedianPrice.push(MedianPrice);
-        }
-
-        if (this.selectedavgOrMdnPrice == 'Average Price') {
-          this.absorptionChart = new Chart(this.marketReportsChart, {
-            type: 'bar',
-            title: {
-              text: 'Dynamic Data'
-            },
-            data: {
-              labels: this.marketReportsQuarter,
-              datasets: [
-                {
-                  label: 'Avg Price in $',
-                  backgroundColor: '#62737B',
-                  hoverBackgroundColor: '#62737B',
-                  data: this.marketReportsAvgPrice
-                }
-              ]
-            },
-            options: this.mrkrp_chart_options
-          });
-        } else if (this.selectedavgOrMdnPrice == 'Median Price') {
-          this.absorptionChart = new Chart(this.marketReportsChart, {
-            type: 'bar',
-            title: {
-              text: 'Dynamic Data'
-            },
-            data: {
-              labels: this.marketReportsQuarter,
-              datasets: [
-                {
-                  label: 'Median Price in $',
-                  backgroundColor: '#9fc151',
-                  hoverBackgroundColor: '#9fc151',
-                  data: this.marketReportsMedianPrice
-                }
-              ]
-            },
-            options: this.mrkrp_chart_options
-          });
-        }
-      },
-      err => {
-        console.log('Error occured while fetching months', err);
-      }
-    );
+      );
   }
 
   // get one neighborhood market reports based on specific brooklyne neighborhood name.
-  getOneNeighborhoodMRBrk(
-    selectedNeighborhood,
-    yearsRange,
-    selectedavgOrMdnPrice?
-  ) {
-    if (selectedNeighborhood) {
-      this.selectedMrRpNbr = selectedNeighborhood;
-      this.mrRpBody = {
-        name: selectedNeighborhood,
-        dateRange: this.yearsSelected
-      };
-    }
-    if (yearsRange) {
-      this.mrRpBody = {
+  getAveragePricesDataForBroklyn() {
+    this.dataService
+      .getOneNeighborhoodMRBrk({
         name: this.selectedMrRpNbr,
-        dateRange: yearsRange
-      };
-    }
+        dateRange: this.yearsSelected
+      })
+      .subscribe(
+        res => {
+          // destroy chart to delete the previous data from it otherwise it will also store the previous data.
+          if (
+            this.theReturnAbsorption !== undefined ||
+            this.abRtOfOneNeibhorhood !== undefined ||
+            this.theReturnMarketReports !== undefined ||
+            this.theReturnMRBrooklyn !== undefined
+          ) {
+            this.absorptionChart.destroy();
+          }
 
-    this.dataService.getOneNeighborhoodMRBrk(this.mrRpBody).subscribe(
-      res => {
-        // destroy chart to delete the previous data from it otherwise it will also store the previous data.
-        if (
-          this.theReturnAbsorption !== undefined ||
-          this.abRtOfOneNeibhorhood !== undefined ||
-          this.theReturnMarketReports !== undefined ||
-          this.theReturnMRBrooklyn !== undefined
-        ) {
-          this.absorptionChart.destroy();
+          this.theReturnMRBrooklyn = res;
+          this.showNoDataMessageBoolean =
+            this.theReturnMRBrooklyn.length === 0 ? true : false;
+
+          this.mRBrooklynQuarter = [];
+          this.mRBrooklynAvgPrice = [];
+          this.mRBrooklynMedianPrice = [];
+
+          for (var i = 0; i < this.theReturnMRBrooklyn.length; i++) {
+            var AveragePrice = this.theReturnMRBrooklyn[i].AveragePrice.replace(
+              /[^0-9]+/g,
+              ''
+            );
+            var MedianPrice = this.theReturnMRBrooklyn[i].MedianPrice.replace(
+              /[^0-9]+/g,
+              ''
+            );
+            this.mRBrooklynQuarter.push(this.theReturnMRBrooklyn[i].Quarter);
+            this.mRBrooklynAvgPrice.push(AveragePrice);
+            this.mRBrooklynMedianPrice.push(MedianPrice);
+          }
+
+          if (this.selectedavgOrMdnPrice == 'Average Price') {
+            this.absorptionChart = new Chart(this.marketReportsChart, {
+              type: 'bar',
+              title: {
+                text: 'Dynamic Data'
+              },
+              data: {
+                labels: this.mRBrooklynQuarter,
+                datasets: [
+                  {
+                    label: 'Avg Price in $',
+                    backgroundColor: '#62737B',
+                    hoverBackgroundColor: '#62737B',
+                    data: this.mRBrooklynAvgPrice
+                  }
+                ]
+              },
+              options: this.mrkrp_chart_options
+            });
+          } else if (this.selectedavgOrMdnPrice == 'Median Price') {
+            this.absorptionChart = new Chart(this.marketReportsChart, {
+              type: 'bar',
+              title: {
+                text: 'Dynamic Data'
+              },
+              data: {
+                labels: this.mRBrooklynQuarter,
+                datasets: [
+                  {
+                    label: 'Median Price in $',
+                    backgroundColor: '#9fc151',
+                    hoverBackgroundColor: '#9fc151',
+                    data: this.mRBrooklynMedianPrice
+                  }
+                ]
+              },
+              options: this.mrkrp_chart_options
+            });
+          }
+        },
+        err => {
+          console.log('Error occured while fetching months', err);
         }
-
-        this.theReturnMRBrooklyn = res;
-        this.showNoDataMessageBoolean =
-          this.theReturnMRBrooklyn.length === 0 ? true : false;
-
-        this.mRBrooklynQuarter = [];
-        this.mRBrooklynAvgPrice = [];
-        this.mRBrooklynMedianPrice = [];
-
-        for (var i = 0; i < this.theReturnMRBrooklyn.length; i++) {
-          var AveragePrice = this.theReturnMRBrooklyn[i].AveragePrice.replace(
-            /[^0-9]+/g,
-            ''
-          );
-          var MedianPrice = this.theReturnMRBrooklyn[i].MedianPrice.replace(
-            /[^0-9]+/g,
-            ''
-          );
-          this.mRBrooklynQuarter.push(this.theReturnMRBrooklyn[i].Quarter);
-          this.mRBrooklynAvgPrice.push(AveragePrice);
-          this.mRBrooklynMedianPrice.push(MedianPrice);
-        }
-
-        if (this.selectedavgOrMdnPrice == 'Average Price') {
-          this.absorptionChart = new Chart(this.marketReportsChart, {
-            type: 'bar',
-            title: {
-              text: 'Dynamic Data'
-            },
-            data: {
-              labels: this.mRBrooklynQuarter,
-              datasets: [
-                {
-                  label: 'Avg Price in $',
-                  backgroundColor: '#62737B',
-                  hoverBackgroundColor: '#62737B',
-                  data: this.mRBrooklynAvgPrice
-                }
-              ]
-            },
-            options: this.mrkrp_chart_options
-          });
-        } else if (this.selectedavgOrMdnPrice == 'Median Price') {
-          this.absorptionChart = new Chart(this.marketReportsChart, {
-            type: 'bar',
-            title: {
-              text: 'Dynamic Data'
-            },
-            data: {
-              labels: this.mRBrooklynQuarter,
-              datasets: [
-                {
-                  label: 'Median Price in $',
-                  backgroundColor: '#9fc151',
-                  hoverBackgroundColor: '#9fc151',
-                  data: this.mRBrooklynMedianPrice
-                }
-              ]
-            },
-            options: this.mrkrp_chart_options
-          });
-        }
-      },
-      err => {
-        console.log('Error occured while fetching months', err);
-      }
-    );
+      );
   }
 }
