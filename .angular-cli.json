@@ -6,11 +6,8 @@
   "apps": [
     {
       "root": "src",
-      "outDir": "dist",
-      "assets": [
-        "assets",
-        "favicon.ico"
-      ],
+      "outDir": "public",
+      "assets": ["assets", "favicon.ico"],
       "index": "index.html",
       "main": "main.ts",
       "polyfills": "polyfills.ts",
@@ -24,9 +21,7 @@
         "../node_modules/ngx-toastr/toastr.css",
         "styles.css"
       ],
-      "scripts": [
-         "../node_modules/bootstrap/dist/js/bootstrap.js"
-      ],
+      "scripts": ["../node_modules/bootstrap/dist/js/bootstrap.js"],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
