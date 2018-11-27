@@ -944,7 +944,6 @@ export class ContentComponent implements OnInit {
   }
   // fetching absorption rates data
   mrArFetchResults() {
-    console.log('mrArFetchResults called');
     if (this.selectedNbr && this.selectedDate) {
       this.showDDSelectionError = '';
       if (this.selectedNbr === 'All Neighborhoods') {
@@ -961,7 +960,6 @@ export class ContentComponent implements OnInit {
   abRtOfOneNeibhorhood: any;
   // get one neighborhood data from absorption rates based on specific date and neighborhood name
   getOneNeighborhoodAbRt() {
-    console.log('getOneNeighborhoodAbRt called');
     this.dataService
       .getOneNeighborhoodAbRt({
         name: this.selectedNbr,
