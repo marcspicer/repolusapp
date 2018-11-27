@@ -751,17 +751,20 @@ button.selected-item .fa {
 }
 
 .stylish-btn-wrapper {
-  margin-top: 17px;
+  margin-top: 15px;
 }
 
 a.stylish-btn {
   line-height: 12px;
   color: #fff;
   padding: 16px;
-  font-size: 15px;
+  font-size: 13.2px;
   border-radius: 4px;
   background: #22c2a6;
   letter-spacing: 0.1em;
+}
+a.stylish-btn i {
+  color: black;
 }
 a.stylish-btn:hover {
   background: #fb4381;
