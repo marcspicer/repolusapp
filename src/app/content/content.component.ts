@@ -485,8 +485,8 @@ export class ContentComponent implements OnInit {
 
   // fetchNeighborOnHovor
   fetchNeighborOnHovor(nbr) {
-    // console.log("fetchNeighborOnHovor called");
-    // console.log("nbr:", nbr);
+    console.log('fetchNeighborOnHovor called');
+    console.log('nbr:', nbr);
 
     var nbrObject = { name: nbr };
     var errorMessage = 'No DATA for ' + nbrObject.name + ' in DB yet.';
@@ -494,6 +494,7 @@ export class ContentComponent implements OnInit {
     this.dataService.fetchNeighborOnHovor(nbrObject).subscribe(
       res => {
         this.onHovorNbr = res;
+        console.log('this.onHovorNbr:', this.onHovorNbr);
 
         if (this.onHovorNbr.length === 0) {
           this.toastr.error(errorMessage);

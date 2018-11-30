@@ -503,6 +503,7 @@ li.dropdown.selected-tag {
   display: block !important;
 }
 .tags .dropdown-menu.first-menu.popup.hide {
+  height: 76rem;
   width: 620px;
   left: -252px;
 }
