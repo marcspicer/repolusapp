@@ -18,7 +18,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { DataService } from './data.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import { Ng2CompleterModule } from "ng2-completer";
+import { Ng2CompleterModule } from 'ng2-completer';
 
 @NgModule({
   declarations: [
@@ -39,27 +39,30 @@ import { Ng2CompleterModule } from "ng2-completer";
     NgbModule.forRoot(),
     BrowserAnimationsModule,
     ToastrModule.forRoot({
-        timeOut: 2000,
-        positionClass: 'toast-bottom-right',
-        preventDuplicates: true,
-      }),
+      timeOut: 2000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true
+    }),
     AngularMultiSelectModule,
     LoadingModule.forRoot({
-        backdropBorderRadius: '4px',
-        primaryColour: '#000000', 
-        secondaryColour: '#000000', 
-        tertiaryColour: '#000000'
+      backdropBorderRadius: '4px',
+      primaryColour: '#000000',
+      secondaryColour: '#000000',
+      tertiaryColour: '#000000'
     }),
     NgxPaginationModule,
-    RouterModule.forRoot([
-    { path: '', component: ContentComponent },
-    { path: 'about',      component: AboutComponent },
-    { path: 'blog',      component: BlogComponent },
-    { path: 'contact',      component: ContactComponent },
-    ]), 
+    RouterModule.forRoot(
+      [
+        { path: '', component: ContentComponent },
+        { path: 'about', component: AboutComponent },
+        { path: 'blog', component: BlogComponent },
+        { path: 'contact', component: ContactComponent }
+      ],
+      { useHash: true }
+    ),
     Ng2CompleterModule
   ],
-  providers: [ DataService ],
+  providers: [DataService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

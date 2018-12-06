@@ -244,7 +244,6 @@ export class ContentComponent implements OnInit {
       this.map.setView([40.7831, -73.9712], 12);
     } else if (borough === 'Brooklyn') {
       this.activeBrooklynId = 'activeBrooklyn';
-      console.log('this.activeBrooklynId', this.activeBrooklynId);
       this.map.setView([40.6453531, -74.0043942], 12);
     }
   }
@@ -458,7 +457,6 @@ export class ContentComponent implements OnInit {
     this.dataService.fetchNeighborhoodsShowOnMap(neighborhoodsToSend).subscribe(
       res => {
         this.neighborhoods = res;
-        // console.log("this.neighborhoods:", this.neighborhoods);
 
         // clear the previous layers
         this.map.removeLayer(this.geoJsonLayer);
@@ -485,16 +483,12 @@ export class ContentComponent implements OnInit {
 
   // fetchNeighborOnHovor
   fetchNeighborOnHovor(nbr) {
-    console.log('fetchNeighborOnHovor called');
-    console.log('nbr:', nbr);
-
     var nbrObject = { name: nbr };
     var errorMessage = 'No DATA for ' + nbrObject.name + ' in DB yet.';
 
     this.dataService.fetchNeighborOnHovor(nbrObject).subscribe(
       res => {
         this.onHovorNbr = res;
-        console.log('this.onHovorNbr:', this.onHovorNbr);
 
         if (this.onHovorNbr.length === 0) {
           this.toastr.error(errorMessage);
@@ -825,7 +819,6 @@ export class ContentComponent implements OnInit {
   deleteCategory(catId) {
     this.dataService.deleteCategory(catId).subscribe(
       res => {
-        // console.log("Deleting category successfully.", res);
         var deletedx = res;
       },
       err => {
@@ -884,8 +877,6 @@ export class ContentComponent implements OnInit {
           .map(s => s.toString())
           .filter((s, i, a) => a.indexOf(s) == i);
 
-        // console.log("this.allNeighborhoodsAbRt:", this.allNeighborhoodsAbRt);
-
         this.allNeighborhoodsAbRt.splice(0, 0, 'All Neighborhoods');
       },
       err => {
@@ -899,7 +890,6 @@ export class ContentComponent implements OnInit {
   // and its like last year, last 2 years etc.
   selectDateRange(dr) {
     this.selectedDateRange = dr;
-    console.log('selectDateRange dr:', dr);
     if (this.selectedDateRange != 'CustomDates') {
       var thisYear = new Date();
       thisYear.toISOString();
@@ -934,17 +924,24 @@ export class ContentComponent implements OnInit {
 
   // Select Neighborhood
   arSelectNeighborhood(nh) {
-    console.log('arSelectNeighborhood nh:', nh);
     this.selectedNbr = nh;
   }
   // Select Year
   arSelectYear(d) {
-    console.log('arSelectYear d:', d);
     d.type;
     this.selectedDate = d;
   }
   // fetching absorption rates data
   mrArFetchResults() {
+    // destroy chart to delete the previous data from it otherwise it will also store the previous data.
+    if (
+      this.theReturnAbsorption !== undefined ||
+      this.abRtOfOneNeibhorhood !== undefined ||
+      this.theReturnMarketReports !== undefined ||
+      this.theReturnMRBrooklyn !== undefined
+    ) {
+      this.absorptionChart.destroy();
+    }
     if (this.selectedNbr && this.selectedDate) {
       this.showDDSelectionError = '';
       if (this.selectedNbr === 'All Neighborhoods') {
@@ -975,7 +972,7 @@ export class ContentComponent implements OnInit {
             this.theReturnMarketReports !== undefined ||
             this.theReturnMRBrooklyn !== undefined
           ) {
-            // this.absorptionChart.destroy();
+            this.absorptionChart.destroy();
           }
 
           this.abRtOfOneNeibhorhood = res[0];
@@ -1146,14 +1143,13 @@ export class ContentComponent implements OnInit {
   // Fetch Results
   // mr = Market Report, ap = Average Prices
   mrApFetchResults() {
-    // console.log('this.selectedAbOrMr:', this.selectedAbOrMr);
-    // console.log('this.selectedManhattanOrBrk:', this.selectedManhattanOrBrk);
-    console.log('this.selectedMrRpNbr:', this.selectedMrRpNbr);
-    // console.log('this.selectedavgOrMdnPrice:', this.selectedavgOrMdnPrice);
-    console.log('this.yearsSelected:', this.yearsSelected);
-
     // destroy chart to delete the previous data from it otherwise it will also store the previous data.
-    if (this.theReturnAbsorption !== undefined) {
+    if (
+      this.theReturnAbsorption !== undefined ||
+      this.abRtOfOneNeibhorhood !== undefined ||
+      this.theReturnMarketReports !== undefined ||
+      this.theReturnMRBrooklyn !== undefined
+    ) {
       this.absorptionChart.destroy();
     }
     // For Fetching data and show on graph we need these two parameters.
