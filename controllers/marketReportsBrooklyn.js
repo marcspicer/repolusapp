@@ -4,37 +4,43 @@ var express = require('express'),
 
 // Categories Schema
 var marketReportsBrkSchema = mongoose.Schema({
-   NeighborhoodName: String,
-   Quarter: String,
-   Sales: Number,
-   AveragePrice: String,
-   MedianPrice: String,
-   AveragePPRoom: String,
-   DaysonMarket: Number,
-   SellingVsAsking: String
+  NeighborhoodName: String,
+  Quarter: String,
+  Sales: Number,
+  AveragePrice: String,
+  MedianPrice: String,
+  AveragePPRoom: String,
+  DaysonMarket: Number,
+  SellingVsAsking: String
 });
 
-var MarketReportsBrooklyns = mongoose.model('MarketReportsBrooklyns', marketReportsBrkSchema);
+var MarketReportsBrooklyns = mongoose.model(
+  'MarketReportsBrooklyns',
+  marketReportsBrkSchema
+);
 
 // get one neighborhood market reports based on specific neighborhood name.
-router.post('/api/getOneNeighborhoodMRBrooklyn', function (request, response) {
-  
-  MarketReportsBrooklyns.find({
-      $and : [
-        { 'NeighborhoodName': request.body.name },
-        { 'Year': { $gte: request.body.dateRange.startYear, $lte: request.body.dateRange.endYear} }
+router.post('/api/getOneNeighborhoodMRBrooklyn', function(request, response) {
+  MarketReportsBrooklyns.find(
+    {
+      $and: [
+        { NeighborhoodName: request.body.name },
+        {
+          Year: {
+            $gte: request.body.dateRange.startYear,
+            $lte: request.body.dateRange.endYear
+          }
+        }
       ]
     },
     function(err, mrRpOneNeibhorhood) {
-      if(err){
-          console.log(err);
-          return res.status(500).send(err);
-        } else{
-            console.log('mrRpOneNeibhorhood::', mrRpOneNeibhorhood);
-            response.send(mrRpOneNeibhorhood);
-        }
-    });
-
+      if (err) {
+        return res.status(500).send(err);
+      } else {
+        response.send(mrRpOneNeibhorhood);
+      }
+    }
+  );
 });
 
 module.exports = router;
