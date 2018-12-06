@@ -752,17 +752,18 @@ button.selected-item .fa {
 }
 
 .stylish-btn-wrapper {
-  margin-top: 15px;
+  /* margin-top: 15px; */
 }
 
 a.stylish-btn {
-  line-height: 12px;
+  line-height: 20px;
   color: #fff;
   padding: 16px;
-  font-size: 13.2px;
+  font-size: 14px;
   border-radius: 4px;
   background: #22c2a6;
   letter-spacing: 0.1em;
+  display: inline-block;
 }
 a.stylish-btn i {
   color: black;
@@ -799,7 +800,7 @@ a.stylish-btn:hover {
   .tags .dropdown > a::after {
     right: 40px;
   }
-  .tags .dropdown > a > span {
+  .tags .dropdown > a > span.pull-right {
     position: absolute;
     right: 15px;
   }
